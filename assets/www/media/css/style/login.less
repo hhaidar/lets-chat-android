@@ -1,0 +1,39 @@
+.lcb-view-login {
+    .content {
+        background-image: url('../img/maze.png');
+    }
+    h1 {
+        text-align: center;
+        font-family: 'Pacifico';
+    }
+    button {
+        width: 100%;
+    }
+    .response {
+        background-color: #fcf8e3;
+        color: #c09853;
+        text-align: center;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #fbeed5;
+        .border-radius(4px);
+        &:empty {
+            display: none;
+        }
+        &.error {
+            color: #b94a48;
+            background-color: #f2dede;
+            border-color: #eed3d7;
+        }
+        &.success {
+            color: #468847;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+    }
+    .build {
+        text-align: center;
+        font-size: 12px;
+    }
+}
