@@ -9,35 +9,45 @@
         <script src="media/js/vendor/store.js"></script>
         <script src="media/js/vendor/uri.js"></script>
         <script src="media/js/vendor/jquery.js"></script>
-        <script src="media/js/login.js"></script>
+        <script src="media/js/vendor/underscore.js"></script>
+        <script src="media/js/vendor/backbone.js"></script>
+        <script src="media/js/models.js"></script>
+        <script src="media/js/views.js"></script>
+        <script src="media/js/client.js"></script>
     </head>
-    <body class="lcb-view-login">
-        <header class="bar-title">
-            <h1 class="title">
-                <i class="icon-group"></i>
-                Let's Chat
-            </h1>
-        </header>
-        <div class="content content-padded">
-            <form>
-                <div class="input-group">
-                    <div class="input-row">
-                        <label>URL</label>
-                        <input type="text" name="url" placeholder="http://letschatbro.com:3000" />
+    <body>
+        <div class="lcb-view-login view">
+            <header class="lcb-view-header bar-title">
+                <h1 class="title">
+                    <i class="icon-group"></i>
+                    Let's Chat
+                </h1>
+            </header>
+            <div class="content content-padded">
+                <form method="POST">
+                    <div class="input-group">
+                        <div class="input-row">
+                            <label>URL</label>
+                            <input type="text" name="url" placeholder="https://letschatbro.com:3000" />
+                        </div>
+                        <div class="input-row">
+                            <label>Email</label>
+                            <input type="text" name="email" placeholder="user@letschatbro.com" />
+                        </div>
+                        <div class="input-row">
+                            <label>Password</label>
+                            <input type="password" name="password" placeholder="Top Secret" />
+                        </div>
                     </div>
-                    <div class="input-row">
-                        <label>Email</label>
-                        <input type="text" name="email" placeholder="user@letschatbro.com" />
-                    </div>
-                    <div class="input-row">
-                        <label>Password</label>
-                        <input type="password" name="password" placeholder="Top Secret" />
-                    </div>
-                </div>
-                <div class="response"></div>
-                <button class="button-block button-main">Sign in</button>
-            </form>
-            <div class="build">Build 001</div>
+                    <div class="response"></div>
+                    <button class="button-block button-main">Sign in</button>
+                </form>
+                <div class="build">Build 001</div>
+            </div>
+        </div>
+        <div class="lcb-view-chat">
+            <div class="room-list">This is the room list</div>
+            <div class="room">These is a room</div>
         </div>
     </body>
 </html>
