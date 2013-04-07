@@ -1048,12 +1048,15 @@ body {
   font-weight: normal;
   font-style: normal;
 }
-.lcb-view-login .content {
-  background-image: url('../img/maze.png');
-}
-.lcb-view-login h1 {
+.bar-title .title {
   text-align: center;
   font-family: 'Pacifico';
+}
+.count:empty {
+  display: none;
+}
+.lcb-view-login .content {
+  background-image: url('../img/maze.png');
 }
 .lcb-view-login button {
   width: 100%;

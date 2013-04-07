@@ -4,6 +4,25 @@ var LCBView = Backbone.View.extend({
     }
 });
 
+var ViewChangerView = LCBView.extend({
+    el: '.views',
+    initialize: function() {
+        this.listen();
+    },
+    listen: function() {
+        this.setvars();
+        var self = this;
+        this.client.events.on('views:show', this.show, this);
+    },
+    show: function(id) {
+        var $view = this.$('.view').filter('[data-id="' + id + '"]');
+        if ($view.length > 0) {
+            $view.siblings('.view').hide();
+            $view.show();
+        }
+    }
+});
+
 var LoginView = LCBView.extend({
     el: '.lcb-view-login',
     events: {
@@ -47,13 +66,43 @@ var LoginView = LCBView.extend({
     }
 });
 
+var RoomListView = LCBView.extend({
+    el: '.lcb-view-room-list',
+    initialize: function() {
+        this.setvars();
+        this.rooms = this.client.data.rooms;
+        this.template = Handlebars.compile($('#template-room-list-item').html());
+        this.listen();
+    },
+    listen: function() {
+        var self = this;
+        this.rooms.on('add', this.add, this);
+        this.rooms.on('remove', this.remove, this);
+    },
+    add: function(room) {
+        var room = room.toJSON();
+        this.$('.rooms').append(this.template(room));
+    },
+    remove: function(room) {
+        var room = room.toJSON();
+        this.$('.room').filter('[data-id=' + room.id + ']').remove();
+    }
+});
+
 var ClientView = LCBView.extend({
     el: 'html',
     initialize: function() {
         this.setvars();
-        this.views = {};
-        this.views.login = new LoginView({
-            client: this.client
-        });
+        this.views = {
+            'viewChanger': new ViewChangerView({
+                client: this.client
+            }),
+            'login': new LoginView({
+                client: this.client
+            }),
+            'roomList': new RoomListView({
+                client: this.client
+            })
+        }
     }
 });
