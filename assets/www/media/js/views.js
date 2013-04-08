@@ -26,6 +26,11 @@ var ViewManagerView = LCBView.extend({
 var RoomView = LCBView.extend({
     lastMessageUser: false,
     scrollLocked: true,
+    events: {
+        'click .entry .send': 'sendMessage',
+        'keypress .entry [name="talk"]': 'sendMessage',
+        'taphold .message .avatar': 'addMention'
+    },
     initialize: function() {
         this.setvars();
         this.template = Handlebars.compile($('#template-room').html());
@@ -75,7 +80,7 @@ var RoomView = LCBView.extend({
         return this.debouncedScrollDown(debounce);
     },
     formatContent: function(text) {
-        return window.utils.message.format(text);
+        return window.utils.message.format(text, false, this.client.data.user.get('safeName'));
     },
     addMessageSoftly: function(message) {
         this.addMessage(message, true);
@@ -84,14 +89,9 @@ var RoomView = LCBView.extend({
         var message = message.toJSON ? message.toJSON() : message;
         message.fragment = this.lastMessageUser === message.owner;
         message.own = this.client.data.user.id === message.owner;
-        message.mentioned = message.text.match(new RegExp('\\@' + this.client.data.user.get('safeName') + '\\b', 'i')) || false;
         message.paste = message.text.match(/\n/ig) || false;
         if (!message.fragment) {
-            this.$messages.append(this.messageTemplate({
-                id: message.id,
-                own: message.own,
-                avatar: message.avatar
-            }));
+            this.$messages.append(this.messageTemplate(message));
         }
         this.$messages.find('.message:last .fragments')
           .append(this.fragmentTemplate(message));
@@ -102,6 +102,24 @@ var RoomView = LCBView.extend({
         if (this.scrollLocked) {
             this.scrollMessagesDown(debounce);
         }
+    },
+    sendMessage: function(e) {
+        if (e.type === 'keypress' && e.keyCode !== 13 || e.altKey) return;
+        e.preventDefault();
+        var $textarea = this.$('.entry [name="talk"]');
+        this.client.events.trigger('room:message:send', {
+            room: this.model.id,
+            text: $.trim($textarea.val())
+        });
+        $textarea.val('');
+    },
+    addMention: function(e) {
+        e.preventDefault();
+        var $input = this.$('.entry [name="talk"]');
+        var name = $(e.currentTarget)
+          .closest('.message')
+          .find('.name').text().replace(/\W/g, '');
+        $input.val($.trim($input.val() + ' @' + name) + ' ');
     }
 });
 

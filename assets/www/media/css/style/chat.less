@@ -10,7 +10,7 @@
     position: fixed;
     top: 44px;
     right: 0;
-    bottom: 0;
+    bottom: 44px;
     left: 0;
     overflow: auto;
     padding: 0;
@@ -21,6 +21,16 @@
     background: #f2f2f2;
     border-bottom: 1px #eee solid;
     position: relative;
+    .top {
+        margin-left: 2px;
+    }
+    .name {
+        font-weight: bold;
+        color: #aaa;
+    }
+    .time {
+        color: #bbb;
+    }
     .avatar {
         width: 51px;
         height: 51px;
@@ -32,6 +42,10 @@
         min-height: 44px;
         padding: 3px 5px;
         margin-left: 51px;
+    }
+    .mention {
+        font-weight: bold;
+        color: #f22472;
     }
     .fragments {
         padding: 2px;
@@ -47,6 +61,40 @@
             text-align: right;
             margin-left: auto;
             margin-right: 51px;
+        }
+    }
+}
+
+.entry {
+    padding: 0;
+    box-shadow: 0 0 15px #bbb;
+    display: -webkit-box;
+    display: box;
+    -webkit-box-orient: horizontal;
+    box-orient: horizontal;
+    &, input, button {
+        display: -webkit-box;
+        display: box;
+    }
+    input {
+        width: auto;
+        border: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+        -webkit-box-flex: 1;
+        box-flex: 1;
+    }
+    .button {
+        height: 100%;
+        line-height: 30px;
+        font-size: 22px;
+        border-top: none;
+        border-right: none;
+        border-left-color: #ddd;
+        border-radius: 0;
+        -webkit-border-radius: 0;
+        i {
+            vertical-align: middle;
         }
     }
 }

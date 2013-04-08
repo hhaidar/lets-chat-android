@@ -11,7 +11,7 @@ if (typeof exports !== 'undefined') {
     //
     // Message Text Formatting
     //
-    exports.format = function(text, plugins) {
+    exports.format = function(text, plugins, mention) {
         // TODO: Fix these regexes
         var imagePattern = /((https?|ftp):\/\/[^\s\/$.?#].[^\s]*[.](jpe?g|png|gif)\s*$)/gi;
         var linkPattern = /((https?|ftp):\/\/[^\s\/$.?#].[^\s]*[^.])/gi;
@@ -30,6 +30,9 @@ if (typeof exports !== 'undefined') {
             _.each(plugins.replacements, function(replacement) {
                 text = text.replace(new RegExp(replacement.regex, 'g'), replacement.template);
             });
+        }
+        if (mention) {
+            text = text.replace(new RegExp('(\\@' + mention + '\\b)', 'g'), '<span class="mention">$1</span>')
         }
         return text;
     }

@@ -50,7 +50,11 @@ Client.prototype.route = function() {
 };
 
 Client.prototype.listenGUI = function() {
+    var self = this;
     this.events.on('client:login', this.login, this);
+    this.events.on('room:message:send', function(message) {
+        self.socket.emit('room:messages:new', message);
+    });
 };
 
 Client.prototype.listenSocket = function() {

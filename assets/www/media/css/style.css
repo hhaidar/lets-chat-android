@@ -1106,7 +1106,7 @@ body {
   position: fixed;
   top: 44px;
   right: 0;
-  bottom: 0;
+  bottom: 44px;
   left: 0;
   overflow: auto;
   padding: 0;
@@ -1116,6 +1116,16 @@ body {
   background: #f2f2f2;
   border-bottom: 1px #eee solid;
   position: relative;
+}
+.message .top {
+  margin-left: 2px;
+}
+.message .name {
+  font-weight: bold;
+  color: #aaa;
+}
+.message .time {
+  color: #bbb;
 }
 .message .avatar {
   width: 51px;
@@ -1128,6 +1138,10 @@ body {
   min-height: 44px;
   padding: 3px 5px;
   margin-left: 51px;
+}
+.message .mention {
+  font-weight: bold;
+  color: #f22472;
 }
 .message .fragments {
   padding: 2px;
@@ -1142,4 +1156,39 @@ body {
   text-align: right;
   margin-left: auto;
   margin-right: 51px;
+}
+.entry {
+  padding: 0;
+  box-shadow: 0 0 15px #bbb;
+  display: -webkit-box;
+  display: box;
+  -webkit-box-orient: horizontal;
+  box-orient: horizontal;
+}
+.entry,
+.entry input,
+.entry button {
+  display: -webkit-box;
+  display: box;
+}
+.entry input {
+  width: auto;
+  border: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -webkit-box-flex: 1;
+  box-flex: 1;
+}
+.entry .button {
+  height: 100%;
+  line-height: 30px;
+  font-size: 22px;
+  border-top: none;
+  border-right: none;
+  border-left-color: #ddd;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+}
+.entry .button i {
+  vertical-align: middle;
 }

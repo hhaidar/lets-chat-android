@@ -45,7 +45,7 @@
                             </div>
                         </div>
                         <div class="response"></div>
-                        <button class="button-block button-main login-button">Sign in</button>
+                        <button class="button-block button-main button-login">Sign in</button>
                     </form>
                     <div class="build">Build 001</div>
                 </div>
@@ -80,11 +80,21 @@
             </h1>
         </header>
         <ul class="messages"></ul>
+        <footer class="entry bar-footer">
+            <input type="text" name="talk" />
+            <a class="send button" href="#">
+                <i class="icon-angle-right"></i>
+            </a>
+        </footer>
     </script>
     <script id="template-message" type="text/x-handlebars-template">
-        <li class="message {{#own}} own{{/own}}{{#mentioned}} mentioned{{/mentioned}}{{#paste}} paste{{/paste}}" data-id="{{id}}" data-owner="{{owner}}" data-posted="{{posted}}" data-room="{{room}}">
+        <li class="message {{#own}}own{{/own}} {{#mentioned}}mentioned{{/mentioned}} {{#paste}}paste{{/paste}}" data-id="{{id}}" data-owner="{{owner}}" data-posted="{{posted}}" data-room="{{room}}">
             <img class="avatar" src="https://www.gravatar.com/avatar/{{avatar}}?s=100" />
             <div class="meta">
+                <div class="top">
+                    <div class="name">{{name}}</div>
+                    <time class="time">{{time}}</time>
+                </div>
                 <div class="fragments"></div>
             </div>
         </li>
