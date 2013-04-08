@@ -1,0 +1,52 @@
+.room-item {
+    &:active {
+        background: red;
+        color: #fff;
+    }
+}
+
+.messages {
+    word-wrap: break-word;
+    position: fixed;
+    top: 44px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    padding: 0;
+    margin: 0;
+}
+
+.message {
+    background: #f2f2f2;
+    border-bottom: 1px #eee solid;
+    position: relative;
+    .avatar {
+        width: 51px;
+        height: 51px;
+        margin-top: -1px;
+        position: absolute;
+    }
+    .meta {
+        background: #fff;
+        min-height: 44px;
+        padding: 3px 5px;
+        margin-left: 51px;
+    }
+    .fragments {
+        padding: 2px;
+    }
+    .fragment {
+        padding: 2px;
+    }
+    &.own {
+        .avatar {
+            right: 0;
+        }
+        .meta {
+            text-align: right;
+            margin-left: auto;
+            margin-right: 51px;
+        }
+    }
+}

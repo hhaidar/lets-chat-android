@@ -4,7 +4,7 @@ var LCBView = Backbone.View.extend({
     }
 });
 
-var ViewChangerView = LCBView.extend({
+var ViewManagerView = LCBView.extend({
     el: '.views',
     initialize: function() {
         this.listen();
@@ -17,8 +17,115 @@ var ViewChangerView = LCBView.extend({
     show: function(id) {
         var $view = this.$('.view').filter('[data-id="' + id + '"]');
         if ($view.length > 0) {
-            $view.siblings('.view').hide();
-            $view.show();
+            $view.siblings('.view').removeClass('current');
+            $view.addClass('current');
+        }
+    }
+});
+
+var RoomView = LCBView.extend({
+    lastMessageUser: false,
+    scrollLocked: true,
+    initialize: function() {
+        this.setvars();
+        this.template = Handlebars.compile($('#template-room').html());
+        this.messageTemplate = Handlebars.compile($('#template-message').html());
+        this.fragmentTemplate = Handlebars.compile($('#template-message-fragment').html());
+        this.render();
+        this.listen();
+    },
+    render: function() {
+        var self = this;
+        var room = this.model.toJSON();
+        this.$el
+            .addClass('lcb-view-room view room')
+            .attr('data-id', room.id)
+            .html(this.template(room))
+            .appendTo($('.views'));
+        this.$messages = this.$('.messages');
+        this.$messages.on('scroll', function() {
+            self.updateScrollLock();
+        });
+    },
+    listen: function() {
+        var self = this;
+        this.model.messages.on('add', this.addMessage, this);
+        this.model.messages.on('addsoftly', this.addMessageSoftly, this);
+    },
+    updateScrollLock: function() {
+        this.scrollLocked = this.$messages[0].scrollHeight -
+          this.$messages.scrollTop() - 5 <= this.$messages.outerHeight();
+        return this.scrollLocked;
+    },
+    scrollMessagesDown: function(debounce) {
+        var self = this;
+        var scrollDown = function() {
+            self.$messages.prop({
+                scrollTop: self.$messages.prop('scrollHeight')
+            });
+        };
+        if (!debounce) {
+            return scrollDown();
+        }
+        if (!this.debouncedScrollDown) {
+            this.debouncedScrollDown = _.debounce(function(debounce) {
+                scrollDown();
+            }, 40);
+        }
+        return this.debouncedScrollDown(debounce);
+    },
+    formatContent: function(text) {
+        return window.utils.message.format(text);
+    },
+    addMessageSoftly: function(message) {
+        this.addMessage(message, true);
+    },
+    addMessage: function(message, debounce) {
+        var message = message.toJSON ? message.toJSON() : message;
+        message.fragment = this.lastMessageUser === message.owner;
+        message.own = this.client.data.user.id === message.owner;
+        message.mentioned = message.text.match(new RegExp('\\@' + this.client.data.user.get('safeName') + '\\b', 'i')) || false;
+        message.paste = message.text.match(/\n/ig) || false;
+        if (!message.fragment) {
+            this.$messages.append(this.messageTemplate({
+                id: message.id,
+                own: message.own,
+                avatar: message.avatar
+            }));
+        }
+        this.$messages.find('.message:last .fragments')
+          .append(this.fragmentTemplate(message));
+        var $text = this.$messages
+          .find('.message:last .fragment:last').find('.text');
+        $text.html(this.formatContent($text.html()));
+        this.lastMessageUser = message.owner;
+        if (this.scrollLocked) {
+            this.scrollMessagesDown(debounce);
+        }
+    }
+});
+
+var RoomManagerView = LCBView.extend({
+    initialize: function() {
+        this.setvars();
+        this.views = {};
+        this.rooms = this.client.data.rooms;
+        this.listen();
+    },
+    listen: function() {
+        var self = this;
+        this.client.events.on('views:show', this.update, this);
+        this.rooms.on('add', this.add, this);
+    },
+    add: function(room) {
+        this.views[room.id] = new RoomView({
+            model: room,
+            client: this.client
+        });
+    },
+    update: function(id) {
+        if (this.views[id] && this.views[id].scrollMessagesDown) {
+            this.views[id].scrollMessagesDown();
         }
     }
 });
@@ -26,6 +133,7 @@ var ViewChangerView = LCBView.extend({
 var LoginView = LCBView.extend({
     el: '.lcb-view-login',
     events: {
+        'tap .login-button': 'submit',
         'submit form': 'login'
     },
     initialize: function() {
@@ -45,6 +153,10 @@ var LoginView = LCBView.extend({
         this.client.events.on('client:login:error', function(err) {
             self.response(err, 'error');
         });
+    },
+    submit: function(e) {
+        e.preventDefault();
+        this.$('form').submit();
     },
     login: function(e) {
         var self = this;
@@ -85,16 +197,19 @@ var RoomListView = LCBView.extend({
     },
     remove: function(room) {
         var room = room.toJSON();
-        this.$('.room').filter('[data-id=' + room.id + ']').remove();
+        this.$('.room-item').filter('[data-id=' + room.id + ']').remove();
     }
 });
 
 var ClientView = LCBView.extend({
     el: 'html',
+    events: {
+        'tap a[href][data-tap]': 'open'
+    },
     initialize: function() {
         this.setvars();
         this.views = {
-            'viewChanger': new ViewChangerView({
+            'viewManager': new ViewManagerView({
                 client: this.client
             }),
             'login': new LoginView({
@@ -102,7 +217,15 @@ var ClientView = LCBView.extend({
             }),
             'roomList': new RoomListView({
                 client: this.client
+            }),
+            'roomManager': new RoomManagerView({
+                client: this.client
             })
         }
+    },
+    open: function(e) {
+        e.preventDefault();
+        var $target = $(e.currentTarget);
+        location.hash = $target.attr('href');
     }
 });

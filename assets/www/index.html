@@ -3,20 +3,23 @@
     <head>
         <meta charset="utf-8">
         <title>Let's Chat</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
         <link href="media/css/style.css" rel="stylesheet" />
         <script src="media/js/vendor/socket.io.js"></script>
+        <script src="media/js/vendor/cordova-2.2.0.js"></script>
         <script src="media/js/vendor/store.js"></script>
         <script src="media/js/vendor/uri.js"></script>
         <script src="media/js/vendor/jquery.js"></script>
         <script src="media/js/vendor/underscore.js"></script>
         <script src="media/js/vendor/backbone.js"></script>
         <script src="media/js/vendor/handlebars.js"></script>
+        <script src="media/js/vendor/toe.js"></script>
+        <script src="media/js/util/message.js"></script>
         <script src="media/js/models.js"></script>
         <script src="media/js/views.js"></script>
         <script src="media/js/client.js"></script>
     </head>
-    <body>
+    <body ontouchstart="">
         <div class="views">
             <div class="lcb-view-login view" data-id="login">
                 <header class="bar-title">
@@ -42,8 +45,7 @@
                             </div>
                         </div>
                         <div class="response"></div>
-                        <button class="button-block button-main">Sign in</button>
-                        
+                        <button class="button-block button-main login-button">Sign in</button>
                     </form>
                     <div class="build">Build 001</div>
                 </div>
@@ -51,26 +53,45 @@
             <div class="lcb-view-room-list view" data-id="room-list">
                 <header class="bar-title">
                     <h1 class="title">
-                        <i class="icon-th-list"></i>
-                        Rooms
+                        Fuck Yea Rooms!
                     </h1>
                 </header>
                 <div class="content">
                     <ul class="rooms list"></ul>
                 </div>
             </div>
-            <div class="lcb-view-rooms view" data-id="rooms">
-                This is the room list
-            </div>
         </div>
     </body>
     <script id="template-room-list-item" type="text/x-handlebars-template">
-        <li class="room" data-id="{{ id }}">
-            <a href="#">
+        <li class="room-item" data-id="{{ id }}">
+            <a href="#!/room/{{ id }}" data-tap>
                 {{ name }}
                 <span class="chevron"></span>
                 <span class="count"></span>
             </a>
         </li>
+    </script>
+    <script id="template-room" type="text/x-handlebars-template">>
+        <header class="bar-title">
+            <a class="button" href="#!/rooms" data-tap><i class="icon-th-list"></i></a>
+            <h1 class="title">
+                <i class="icon-comments-alt"></i>
+                {{ name }}
+            </h1>
+        </header>
+        <ul class="messages"></ul>
+    </script>
+    <script id="template-message" type="text/x-handlebars-template">
+        <li class="message {{#own}} own{{/own}}{{#mentioned}} mentioned{{/mentioned}}{{#paste}} paste{{/paste}}" data-id="{{id}}" data-owner="{{owner}}" data-posted="{{posted}}" data-room="{{room}}">
+            <img class="avatar" src="https://www.gravatar.com/avatar/{{avatar}}?s=100" />
+            <div class="meta">
+                <div class="fragments"></div>
+            </div>
+        </li>
+    </script>
+    <script id="template-message-fragment" type="text/x-handlebars-template">
+        <div class="fragment {{#own}}own{{/own}} {{#mentioned}}mentioned{{/mentioned}}" data-id="{{id}}" data-owner="{{owner}}" data-posted="{{posted}}" data-room="{{room}}">
+            <div class="text">{{text}}</div>
+        </div>
     </script>
 </html>

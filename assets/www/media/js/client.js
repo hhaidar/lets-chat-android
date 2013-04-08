@@ -5,13 +5,48 @@ Client.prototype.init = function() {
     this.state = {};
     this.events = _.extend({}, Backbone.Events);
     this.data = {
+        user: new UserModel,
         rooms: new RoomsCollection
     }
     this.view = new ClientView({
         client: this
     });
     this.listenGUI();
-    this.events.trigger('views:show', 'login');
+    this.route();
+};
+
+Client.prototype.route = function() {
+    var self = this;
+    var Router = Backbone.Router.extend({
+        routes: {
+            '!/rooms': 'rooms',
+            '!/room/:id': 'room',
+            '*path': 'login'
+        },
+        login: function() {
+            if (self.state.authenticated) {
+                this.navigate('!/rooms');
+                return;
+            }
+            self.events.trigger('views:show', 'login');
+        },
+        rooms: function() {
+            if (!self.state.authenticated) {
+                this.navigate('!/', true);
+                return;
+            }
+            self.events.trigger('views:show', 'room-list');
+        },
+        room: function(id) {
+            if (!self.state.authenticated) {
+                this.navigate('!/', true);
+                return;
+            }
+            self.events.trigger('views:show', id);
+        }
+    });
+    this.router = new Router;
+    Backbone.history.start();
 };
 
 Client.prototype.listenGUI = function() {
@@ -24,42 +59,49 @@ Client.prototype.listenSocket = function() {
         return;
     }
     this.socket.on('connect', function() {
+        self.socket.emit('user:whoami');
         self.socket.emit('rooms:get');
-        console.log('connected');
     });
     this.socket.on('user:whoami', function(profile) {
-        console.log('whoami');
+        self.data.user.set(profile);
     });
     this.socket.on('user:update', function(profile) {
-        console.log('user:update');
     });
-    this.socket.on('room:messages:new', function(message) {
-        console.log('room:messages:new');
+    this.socket.on('room:messages:new', function(data) {
+        if ($.isArray(data)) {
+            _.each(data, function(message) {
+                var room = self.data.rooms.get(message.room);
+                room.messages.add(message, {
+                    silent: true
+                });
+                room.messages.trigger('addsoftly', message);
+            });
+        } else {
+            var room = self.data.rooms.get(data.room);
+            room.messages.add(data);
+        }
     });
     this.socket.on('room:users:new', function(user) {
-        console.log('room:users:new');
     });
     this.socket.on('room:users:leave', function(user) {
-        console.log('room:users:leave');
     });
     this.socket.on('room:remove', function(id) {
-        console.log('room:remove')
     });
     this.socket.on('room:update', function(data) {
-        console.log('room:update');
     });
     this.socket.on('rooms:new', function(room) {
         self.data.rooms.add(room);
         self.socket.emit('room:join', room.id);
+        self.socket.emit('room:messages:get', {
+            room: room.id
+        });
     });
     this.socket.on('rooms:remove', function(id) {
         self.data.rooms.remove(id);
     });
     this.socket.on('rooms:users:new', function(user) {
-        console.log('rooms:users:new');
     });
     this.socket.on('rooms:users:leave', function(user) {
-        console.log('rooms:users:leave');
     });
     this.state.listenSocket = true;
 };
@@ -87,7 +129,7 @@ Client.prototype.login = function(creds) {
             self.state.authenticated = true;
             self.connect(connectionURL.toString(), false);
             self.events.trigger('client:login:success');
-            self.events.trigger('views:show', 'room-list');
+            self.router.navigate('!/rooms', true);
         });
     } catch(e) {
        this.events.trigger('client:login:error', e);
