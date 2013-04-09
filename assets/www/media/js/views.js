@@ -29,7 +29,8 @@ var RoomView = LCBView.extend({
     events: {
         'click .entry .send': 'sendMessage',
         'keypress .entry [name="talk"]': 'sendMessage',
-        'taphold .message .avatar': 'addMention'
+        'taphold .message .avatar': 'addMention',
+        'click .message a[href][target=_blank]': 'openLink'
     },
     initialize: function() {
         this.setvars();
@@ -120,6 +121,12 @@ var RoomView = LCBView.extend({
           .closest('.message')
           .find('.name').text().replace(/\W/g, '');
         $input.val($.trim($input.val() + ' @' + name) + ' ');
+    },
+    openLink: function(e) {
+        e.preventDefault();
+        navigator.app.loadUrl($(e.currentTarget).attr('href'), {
+            openExternal: true
+        });
     }
 });
 
