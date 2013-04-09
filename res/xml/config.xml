@@ -22,17 +22,16 @@
     access elements control the Android whitelist.
     Domains are assumed blocked unless set otherwise
      -->
-
-    <access origin="http://127.0.0.1*"/> <!-- allow local pages -->
-
+    <access origin="http://127.0.0.1*" /> <!-- allow local pages -->
     <!-- <access origin="https://example.com" /> allow any secure requests to example.com -->
     <!-- <access origin="https://example.com" subdomains="true" /> such as above, but including subdomains, such as www -->
-    <access origin=".*"/>
-
-    <log level="DEBUG"/>
+    <access origin=".*" />
+    <log level="DEBUG" />
     <preference name="useBrowserHistory" value="false" />
     <preference name="exit-on-suspend" value="false" />
     <preference name="keepRunning" value="true" />
+    <preference name="show-splash-screen-spinner" value="true" />
+    <preference name="load-url-timeout" value="30000" />
     <plugins>
         <plugin name="App" value="org.apache.cordova.App"/>
         <plugin name="Geolocation" value="org.apache.cordova.GeoBroker"/>
