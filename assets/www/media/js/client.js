@@ -127,7 +127,7 @@ Client.prototype.login = function(creds) {
         this.connect(connectionURL.toString(), true);
         this.socket.once('error', function(err) {
             self.state.authenticated = false;
-            self.events.trigger('client:login:error', err);
+            self.events.trigger('client:login:error', err || 'Connection failed');
         });
         this.socket.once('connect', function() {
             self.state.authenticated = true;
