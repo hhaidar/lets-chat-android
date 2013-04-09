@@ -22,6 +22,14 @@ body {
     display: block;
 }
 
+// Fixes android viewport issue
+@media (orientation:portrait) and (orientation:landscape) {
+    .content,
+    .bar-title {
+        position:fixed;
+    }
+}
+
 .bar-title .title {
     text-align: center;
     font-family: 'Pacifico';
