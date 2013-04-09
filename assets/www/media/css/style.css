@@ -1155,6 +1155,9 @@ body {
 .message .fragment {
   padding: 2px;
 }
+.message .text img {
+  max-width: 100%;
+}
 .message.own .avatar {
   right: 0;
 }
