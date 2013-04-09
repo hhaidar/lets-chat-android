@@ -51,10 +51,25 @@ Client.prototype.route = function() {
 
 Client.prototype.listenGUI = function() {
     var self = this;
+    this.events.on('client:pause', function() {
+        self.state.paused = true;
+    });
+    this.events.on('client:resume', function() {
+        self.state.paused = false;
+    });
     this.events.on('client:login', this.login, this);
     this.events.on('room:message:send', function(message) {
         self.socket.emit('room:messages:new', message);
     });
+    this.events.on('room:message:new', function(message) {
+        if (!client.state.paused) {
+            return;
+        }
+        if (message.text.match(new RegExp('\\@' + self.data.user.get('safeName') + '\\b', 'g'))) {
+            console.log(message.text.match(new RegExp('\\@' + self.data.user.get('safeName') + '\\b', 'ig')));
+            window.plugins.statusBarNotification.notify('Mentioned by ' + message.name, message.text);
+        }
+    })
 };
 
 Client.prototype.listenSocket = function() {
@@ -83,6 +98,7 @@ Client.prototype.listenSocket = function() {
         } else {
             var room = self.data.rooms.get(data.room);
             room.messages.add(data);
+            self.events.trigger('room:message:new', data);
         }
     });
     this.socket.on('room:users:new', function(user) {

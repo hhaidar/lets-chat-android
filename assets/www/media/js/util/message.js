@@ -32,7 +32,7 @@ if (typeof exports !== 'undefined') {
             });
         }
         if (mention) {
-            text = text.replace(new RegExp('(\\@' + mention + '\\b)', 'g'), '<span class="mention">$1</span>')
+            text = text.replace(new RegExp('(\\@' + mention + '\\b)', 'ig'), '<span class="mention">$1</span>')
         }
         return text;
     }

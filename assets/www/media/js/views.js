@@ -240,6 +240,15 @@ var ClientView = LCBView.extend({
                 client: this.client
             })
         }
+        this.listen();
+    },
+    listen: function() {
+        var self = this;
+        $(document).on('pause', function() {
+            self.client.events.trigger('client:pause');
+        }).on('resume', function() {
+            self.client.events.trigger('client:resume');
+        });
     },
     open: function(e) {
         e.preventDefault();
